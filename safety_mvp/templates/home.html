@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OHS ISO 45001 Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #f5f6fa;
+            color: #444;
+            padding: 20px 0 20px 30px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .card:hover {
+            background: #ecf0f1;
+            cursor: pointer;
+        }
+        a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        /* Added styles for charts container */
+        .charts-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+        .chart-wrapper {
+            flex: 1;
+        }
+        /* Added styles for objectives table */
+        .objectives-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            margin: 40px 0;
+        }
+        .objectives-table th, .objectives-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .objectives-table th {
+            background: #eaeaea;
+            color: #555;
+            text-align: left;
+            padding-left: 18px;
+        }
+        .objectives-table td {
+            padding-left: 12px;
+        }
+        .progress-outer {
+            width: 100px;
+            background: #f0f1f3;
+            border-radius: 4px;
+            height: 24px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .progress-inner {
+            background: #6c8ebf; /* softer blue */
+            color: #fff;
+            text-align: center;
+            height: 24px;
+            border-radius: 4px;
+            min-width: 30px;
+            padding-left: 12px;
+            padding-right: 12px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.4s;
+        }
+        .objectives-heading {
+            background: #f5f6fa;
+            color: #444;
+            padding: 12px 0 12px 30px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 1.7rem; /* Slightly smaller than h1 */
+            margin-bottom: 20px;
+            margin-top: 0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>OHS ISO 45001 Safety Dashboard</h1>
+        <p>Tools for Audit, Compliance & Reporting</p>
+         <a href="/admin/" style="position: absolute; top: 25px; right: 30px; color: #2c3e50; font-weight: bold; text-decoration: none;">🔐 Login</a>
+    </header>
+    <div class="dashboard">
+        <div class="card"><a href="/admin/ohs/incident/">📄 Incident Reporting</a></div>
+        <div class="card"><a href="/admin/ohs/jsa/">📋 JSA (Job Safety Analysis)</a></div>
+        <div class="card"><a href="/admin/ohs/fra/">⚠️ FRA (Risk Assessment)</a></div>
+        <div class="card"><a href="/admin/ohs/flra/">🛠 FLRA (Field Level Risk)</a></div>
+        <div class="card"><a href="/admin/ohs/document/">📁 SDS / SOP Docs</a></div>
+        <div class="card"><a href="/admin/ohs/material/">🧪 Material Safety Data</a></div>
+        <div class="card"><a href="/admin/ohs/observation/">👀 CCV / PTO Observations</a></div>
+        <div class="card"><a href="/admin/ohs/safetychecklist/">✅ Safety Checklists</a></div>
+        <div class="card"><a href="/admin/ohs/certification/">🎓 Certifications</a></div>
+        <div class="card"><a href="/admin/ohs/contractor/">🏗️ Contractor Onboarding</a></div>
+        <div class="card"><a href="/admin/ohs/employee/">👷 Employees</a></div>
+    </div>
+    <!-- Charts container -->
+    <div class="charts-container">
+        <div class="chart-wrapper" style="max-width: 400px;">
+            <canvas id="compliancePie"></canvas>
+        </div>
+        <div class="chart-wrapper" style="max-width: 600px;">
+            <canvas id="complianceBar"></canvas>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Pie Chart
+        const pieData = {
+            labels: [
+                'Incidents', 'JSA', 'FRA', 'FLRA', 'Documents',
+                'Materials', 'Observations', 'Checklists', 'Certifications', 'Contractors', 'Employees'
+            ],
+            datasets: [{
+                label: 'Compliance Items',
+                data: [
+                    Number("{{ incident_count|default:'0' }}"),
+                    Number("{{ jsa_count|default:'0' }}"),
+                    Number("{{ fra_count|default:'0' }}"),
+                    Number("{{ flra_count|default:'0' }}"),
+                    Number("{{ document_count|default:'0' }}"),
+                    Number("{{ material_count|default:'0' }}"),
+                    Number("{{ observation_count|default:'0' }}"),
+                    Number("{{ safetychecklist_count|default:'0' }}"),
+                    Number("{{ certification_count|default:'0' }}"),
+                    Number("{{ contractor_count|default:'0' }}"),
+                    Number("{{ employee_count|default:'0' }}")
+                ],
+                backgroundColor: [
+                    '#3498db', '#e67e22', '#2ecc71', '#9b59b6', '#f1c40f',
+                    '#1abc9c', '#e74c3c', '#34495e', '#95a5a6', '#d35400', '#27ae60'
+                ]
+            }]
+        };
+        const pieConfig = {
+            type: 'pie',
+            data: pieData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: {
+                        display: true,
+                        text: 'Compliance Tracking Overview'
+                    }
+                }
+            }
+        };
+        new Chart(document.getElementById('compliancePie'), pieConfig);
+
+        // Bar Chart
+        const barLabels = ['Observations (CCV/PTO)', 'FLRA', 'JSA', 'FRA'];
+        const current = [
+            Number("{{ observation_count|default:'0' }}"),
+            Number("{{ flra_count|default:'0' }}"),
+            Number("{{ jsa_count|default:'0' }}"),
+            Number("{{ fra_count|default:'0' }}")
+        ];
+        const targets = [
+            Number("{{ observation_target|default:'0' }}"),
+            Number("{{ flra_target|default:'0' }}"),
+            Number("{{ jsa_target|default:'0' }}"),
+            Number("{{ fra_target|default:'0' }}")
+        ];
+        const barData = {
+            labels: barLabels,
+            datasets: [
+                {
+                    label: 'Current',
+                    data: current,
+                    backgroundColor: '#3498db'
+                },
+                {
+                    label: 'Target',
+                    data: targets,
+                    backgroundColor: '#e74c3c'
+                }
+            ]
+        };
+        new Chart(document.getElementById('complianceBar'), {
+            type: 'bar',
+            data: barData,
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Compliance Progress vs Target'
+                    }
+                }
+            }
+        });
+    </script>
+    <!-- Objectives table (dynamic from backend) -->
+    <div style="overflow-x:auto; margin: 40px 0;">
+        <h2 class="objectives-heading">Objectives &amp; Target Tracker</h2>
+        <table class="objectives-table">
+            <tr>
+                <th>Objective</th>
+                <th>Description</th>
+                <th>Target</th>
+                <th>Current</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Due Date</th>
+            </tr>
+            {% for obj in objectives %}
+            <tr>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.description }}</td>
+                <td>{{ obj.target }}</td>
+                <td>{{ obj.current }}</td>
+                <td>
+                    <div class="progress-outer">
+                        <div class="progress-inner" data-progress="{{ obj.progress_percent|default:0 }}">
+                            {{ obj.progress_percent|default:0 }}%
+                        </div>
+                    </div>
+                </td>
+                <td>{{ obj.get_status_display }}</td>
+                <td>{% if obj.assigned_to %}{{ obj.assigned_to.get_full_name }}{% endif %}</td>
+                <td>{{ obj.due_date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Objectives Progress Bar Chart -->
+    <div style="max-width: 800px; margin: 40px auto;">
+        <canvas id="objectivesProgressBar"></canvas>
+    </div>
+    <script id="obj-data" type="application/json">
+    {
+      "labels": [{% for obj in objectives %}"{{ obj.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+      "progress": [{% for obj in objectives %}{{ obj.progress_percent|default:0|floatformat:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]
+    }
+    </script>
+    <script>
+    const objData = JSON.parse(document.getElementById('obj-data').textContent);
+    const objLabels = objData.labels;
+    const objProgress = objData.progress;
+
+    new Chart(document.getElementById('objectivesProgressBar'), {
+        type: 'bar',
+        data: {
+            labels: objLabels,
+            datasets: [{
+                label: 'Progress (%)',
+                data: objProgress,
+                backgroundColor: '#2ecc71'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Objectives Progress'
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+    </script>
+<!-- Training Matrix Table -->
+<div style="overflow-x:auto; margin: 40px 0;">
+    <h2 class="objectives-heading">Training Matrix Tracker</h2>
+    <table class="objectives-table">
+        <tr>
+            <th>Training</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Progress</th>
+            <th>Training Date</th>
+            <th>Due Date</th>
+            <th>Certificate Required</th>
+            <th>Assigned Employees</th>
+        </tr>
+        {% for training in training_matrix %}
+        <tr>
+            <td>{{ training.title }}</td>
+            <td>{{ training.description }}</td>
+            <td>{{ training.get_status_display }}</td>
+            <td>
+                <div class="progress-outer">
+                    <div class="progress-inner" data-progress="{{ training.progress_percent|default:0 }}">
+                        {{ training.progress_percent|default:0 }}%
+                    </div>
+                </div>
+            </td>
+            <td>{{ training.training_date }}</td>
+            <td>{{ training.due_date }}</td>
+            <td>{{ training.certificate_required|yesno:"Yes,No" }}</td>
+            <td>
+                {% for emp in training.assigned_employees.all %}
+                    {{ emp.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    <em>None</em>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- Training Matrix Progress Bar Chart -->
+<div style="max-width: 800px; margin: 40px auto;">
+    <canvas id="trainingProgressBar"></canvas>
+</div>
+<script id="training-data" type="application/json">
+{
+  "labels": [{% for training in training_matrix %}"{{ training.title|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+  "progress": [{% for training in training_matrix %}{{ training.progress_percent|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]
+   
+}
+</script>
+<script>
+const trainingData = JSON.parse(document.getElementById('training-data').textContent);
+const trainingLabels = trainingData.labels;
+const trainingProgress = trainingData.progress;
+
+new Chart(document.getElementById('trainingProgressBar'), {
+    type: 'bar',
+    data: {
+        labels: trainingLabels,
+        datasets: [{
+            label: 'Training Completion (%)',
+            data: trainingProgress,
+            backgroundColor: '#3498db'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Training Matrix Progress'
+            }
+        },
+        scales: {
+            y: { beginAtZero: true, max: 100 }
+        }
+    }
+});
+</script>
+
+
+
+
+
+    <script>
+document.querySelectorAll('.progress-inner').forEach(function(el) {
+    el.style.width = el.getAttribute('data-progress') + '%';
+});
+</script>
+</body>
+</html>

@@ -1,15 +1,12 @@
-[project]
+[tool.poetry]
 name = "ohs-iso-chklst"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "MansLikeNight",email = "evabloo2342@gmail.com"}
-]
-readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "gunicorn (>=23.0.0,<24.0.0)"
-]
+authors = ["MansLikeNight <evabloo2342@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+gunicorn = "^23.0.0"
 
 
 [build-system]

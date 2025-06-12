@@ -34,7 +34,22 @@ files = [
     {file = "packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"},
 ]
 
+[[package]]
+name = "whitenoise"
+version = "6.9.0"
+description = "Radically simplified static file serving for WSGI applications"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "whitenoise-6.9.0-py3-none-any.whl", hash = "sha256:c8a489049b7ee9889617bb4c274a153f3d979e8f51d2efd0f5b403caf41c57df"},
+    {file = "whitenoise-6.9.0.tar.gz", hash = "sha256:8c4a7c9d384694990c26f3047e118c691557481d624f069b7f7752a2f735d609"},
+]
+
+[package.extras]
+brotli = ["brotli"]
+
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.13"
-content-hash = "becc410bca8873722c361439d4e342cfff09c2519be94e9705d0480c9204cbdd"
+python-versions = ">=3.11,<4.0"
+content-hash = "874e8dff2ecc77d2437cf9f1ea61558b03785b51d25a882ae795b886c4587876"
